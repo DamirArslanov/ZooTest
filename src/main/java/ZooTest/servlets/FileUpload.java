@@ -17,24 +17,18 @@ import javax.servlet.http.Part;
 import java.io.*;
 
 /**
- * Created by Cheshire on 14.12.2016.
+ * Created by ArslanovDamir on 15.12.2016.
  */
 @WebServlet("/UploadServlet")
 @MultipartConfig(fileSizeThreshold=1024*1024*2, // 2MB
-        maxFileSize=1024*1024*100,      // 10MB
+        maxFileSize=1024*1024*100,      // 100MB
         maxRequestSize=1024*1024*100)   // 100MB
 public class FileUpload extends HttpServlet {
     private static final Logger LOG = LogManager.getLogger(FileUpload.class);
 
-    /**
-     * Name of the directory where uploaded files will be saved, relative to
-     * the web application directory.
-     */
+
     private static final String SAVE_DIR = "D:\\";
 
-    /**
-     * handles file upload
-     */
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response) throws ServletException, IOException {
 //        // gets absolute path of the web application
@@ -82,9 +76,7 @@ public class FileUpload extends HttpServlet {
 //        request.getRequestDispatcher("/message.jsp").forward(
 //                request, response);
     }
-    /**
-     * Extracts file name from HTTP header content-disposition
-     */
+
     private String extractFileName(Part part) {
         String contentDisp = part.getHeader("content-disposition");
         String[] items = contentDisp.split(";");
