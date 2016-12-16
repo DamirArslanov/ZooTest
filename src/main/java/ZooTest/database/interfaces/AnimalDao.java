@@ -2,12 +2,17 @@ package ZooTest.database.interfaces;
 
 import ZooTest.entity.Animal;
 
+import javax.annotation.Resource;
+import javax.enterprise.context.ApplicationScoped;
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by ArslanovDamir on 16.12.2016.
  */
-public interface AnimalDao {
+
+//Maybe <T>?
+public interface AnimalDAO {
 
     public void addAnimal(Animal animal);
 

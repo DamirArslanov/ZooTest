@@ -1,12 +1,11 @@
 package ZooTest.database;
 
-import ZooTest.database.interfaces.AnimalDao;
+import ZooTest.database.interfaces.AnimalDAO;
 import ZooTest.entity.Animal;
 import ZooTest.entity.Cage;
 import ZooTest.entity.Keeper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import javax.enterprise.context.ApplicationScoped;
 import java.sql.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,7 +14,9 @@ import java.util.List;
  * Created by ArslanovDamir on 16.12.2016.
  */
 
-public class AnimalDAOImpl implements AnimalDao {
+
+@ApplicationScoped
+public class AnimalDAOImpl implements AnimalDAO {
     private static final String URL = "jdbc:mysql://localhost:3306/zoo?useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false";
     private static final String USER = "root";
     private static final String PASSWORD = "root";
