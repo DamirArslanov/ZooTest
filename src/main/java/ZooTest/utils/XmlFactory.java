@@ -22,7 +22,7 @@ public class XmlFactory {
             JAXBContext context = JAXBContext.newInstance(animalsList.getClass());
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            //Должны тут переписать под возвращение файла
+            //Переписать под возвращение файла
             marshaller.marshal(animalsList, System.out);
         } catch (JAXBException e) {
             e.printStackTrace();
