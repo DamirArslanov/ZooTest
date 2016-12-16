@@ -268,7 +268,6 @@ public class AnimalDAOImpl implements AnimalDao {
                     System.out.println("AnimalAGE: " + animal.getAge());
                     System.out.println("-------------");
 
-
                     keeper.setId(animalResult.getInt(5));
                     if (keeper.getId() != 0) {
                         System.out.println("KeeperID: " + keeper.getId());
@@ -280,8 +279,6 @@ public class AnimalDAOImpl implements AnimalDao {
                         animal.setKeeper(keeper);
                     } else animal.setKeeper(null);
 
-
-
                     cage.setCageID(animalResult.getInt(8));
                     if (cage.getCageID() != 0) {
                         System.out.println("CageID " + cage.getCageID());
@@ -292,16 +289,12 @@ public class AnimalDAOImpl implements AnimalDao {
                         System.out.println("--------_____________--------");
                     }
                 }
-
                 animals.add(animal);
             }
-
             dbConnection.commit();
-
         }catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
         return animals;
     }
 }
