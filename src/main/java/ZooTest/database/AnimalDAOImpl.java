@@ -50,7 +50,16 @@ public class AnimalDAOImpl implements AnimalDAO {
             "LEFT JOIN keeper ON keeper_animals.keeperID = keeper.keeperID " +
             "LEFT JOIN cage_animals ON animal.id = cage_animals.animalID " +
             "LEFT JOIN cage ON cage_animals.cageID = cage.cageID " +
-            "WHERE animal.id = ?;";
+            "WHERE animal.id = ?";
+
+    private String getFullALLAnimal = "SELECT animal.id, animal.name, animal.animalClass, animal.age, " +
+            "keeper.keeperID, keeper.name, keeper.surname, " +
+            "cage.cageID, cage.number FROM animal " +
+            "LEFT JOIN keeper_animals ON animal.id = keeper_animals.animalID " +
+            "LEFT JOIN keeper ON keeper_animals.keeperID = keeper.keeperID " +
+            "LEFT JOIN cage_animals ON animal.id = cage_animals.animalID " +
+            "LEFT JOIN cage ON cage_animals.cageID = cage.cageID";
+
 
 
 
@@ -230,66 +239,52 @@ public class AnimalDAOImpl implements AnimalDAO {
 
     }
 
-    //ПЕРЕПИСАТЬ
+
     @Override
     public List<Animal> getAllAnimals() {
         List<Animal> animals = new LinkedList<>();
 
         try(Connection dbConnection = getDBConnection();
             Statement stmt = dbConnection.createStatement();
-            ResultSet resultSetA = stmt.executeQuery("SELECT COUNT(*) FROM animal");
-            PreparedStatement pStatement = dbConnection.prepareStatement(getFullAnimal)) {
+            ResultSet resultSetA = stmt.executeQuery(getFullALLAnimal)) {
 
-            resultSetA.next();
-            int lastAnimalsID = resultSetA.getInt(1);
-            System.out.println("Сейчас максимальный Animal ID = "  + lastAnimalsID);
 
             dbConnection.setAutoCommit(false);
+            while (resultSetA.next()) {
 
-//            animal.id, animal.name, animal.animalClass, animal.age,
-//            keeper.keeperID, keeper.name, keeper.surname,
-//            cage.cageID, cage.number
-
-            for (int i = 1; i <= lastAnimalsID; i++) {
                 Animal animal = new Animal();
                 Keeper keeper = new Keeper();
                 Cage cage = new Cage();
 
-                pStatement.setInt(1, i);
+                animal.setId(resultSetA.getInt(1));
+                System.out.println("AnimalID: " + animal.getId());
+                animal.setName(resultSetA.getString(2));
+                System.out.println("AnimalNAME: " + animal.getName());
+                animal.setAnimalClass(resultSetA.getString(3));
+                System.out.println("AnimalCLASS: " + animal.getAnimalClass());
+                animal.setAge(resultSetA.getInt(4));
+                System.out.println("AnimalAGE: " + animal.getAge());
+                System.out.println("-------------");
 
-                ResultSet animalResult = pStatement.executeQuery();
-                while (animalResult.next()) {
+                keeper.setId(resultSetA.getInt(5));
+                if (keeper.getId() != 0) {
+                    System.out.println("KeeperID: " + keeper.getId());
+                    keeper.setName(resultSetA.getString(6));
+                    System.out.println("KeeperNAME: " + keeper.getName());
+                    keeper.setSurname(resultSetA.getString(7));
+                    System.out.println("KeeperSURNAME: " + keeper.getSurname());
+                    System.out.println("--------------");
+                    animal.setKeeper(keeper);
+                } else animal.setKeeper(null);
 
-                    animal.setId(animalResult.getInt(1));
-                    System.out.println("AnimalID: " + animal.getId());
-                    animal.setName(animalResult.getString(2));
-                    System.out.println("AnimalNAME: " + animal.getName());
-                    animal.setAnimalClass(animalResult.getString(3));
-                    System.out.println("AnimalCLASS: " + animal.getAnimalClass());
-                    animal.setAge(animalResult.getInt(4));
-                    System.out.println("AnimalAGE: " + animal.getAge());
-                    System.out.println("-------------");
-
-                    keeper.setId(animalResult.getInt(5));
-                    if (keeper.getId() != 0) {
-                        System.out.println("KeeperID: " + keeper.getId());
-                        keeper.setName(animalResult.getString(6));
-                        System.out.println("KeeperNAME: " + keeper.getName());
-                        keeper.setSurname(animalResult.getString(7));
-                        System.out.println("KeeperSURNAME: " + keeper.getSurname());
-                        System.out.println("--------------");
-                        animal.setKeeper(keeper);
-                    } else animal.setKeeper(null);
-
-                    cage.setCageID(animalResult.getInt(8));
-                    if (cage.getCageID() != 0) {
-                        System.out.println("CageID " + cage.getCageID());
-                        cage.setNumber(animalResult.getInt(9));
-                        System.out.println("CageNumber" + cage.getNumber());
-                        animal.setCage(cage);
-                        System.out.println("--------------");
-                        System.out.println("--------_____________--------");
-                    }
+                cage.setCageID(resultSetA.getInt(8));
+                if (cage.getCageID() != 0) {
+                    System.out.println("CageID " + cage.getCageID());
+                    cage.setNumber(resultSetA.getInt(9));
+                    System.out.println("CageNumber" + cage.getNumber());
+                    animal.setCage(cage);
+                    System.out.println("--------------");
+                    System.out.println("--------_____________--------");
                 }
                 animals.add(animal);
             }
