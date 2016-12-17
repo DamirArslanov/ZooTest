@@ -15,7 +15,7 @@ import java.util.List;
  */
 
 
-@ApplicationScoped
+
 public class AnimalDAOImpl implements AnimalDAO {
     private static final String URL = "jdbc:mysql://localhost:3306/zoo?useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false";
     private static final String USER = "root";
@@ -230,6 +230,7 @@ public class AnimalDAOImpl implements AnimalDAO {
 
     }
 
+    //ПЕРЕПИСАТЬ
     @Override
     public List<Animal> getAllAnimals() {
         List<Animal> animals = new LinkedList<>();
