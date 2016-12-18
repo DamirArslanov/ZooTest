@@ -10,7 +10,7 @@ import java.util.List;
 //Maybe <T>?
 public interface KeeperDAO {
 
-    public void addKeeper(Keeper keeper);
+    public Integer addKeeper(Keeper keeper);
 
     public void updateKeeper(Keeper keeper);
 

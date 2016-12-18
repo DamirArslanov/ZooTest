@@ -21,8 +21,11 @@ public class AnimalDAOImpl implements AnimalDAO {
     private static final String USER = "root";
     private static final String PASSWORD = "root";
 
-    private String InsertAnimal = "INSERT INTO animal (id, name, animalClass, age) " +
-            "VALUES(?, ?, ?, ?)";
+    private String InsertAnimal = "INSERT INTO animal (name, animalClass, age) " +
+            "VALUES(?, ?, ?)";
+
+    private String updateAnimal = "UPDATE animal SET animal.name = ?, animal.animalClass = ?, animal.age = ? WHERE animal.id = ?";
+
     private String getAnimalByID = "SELECT animal.id, animal.name, animal.animalClass, animal.age FROM animal WHERE animal.id = ?;";
 
     private String getKeeperByAnimalID = "SELECT keeper.keeperID, keeper.name, keeper.surname " +
@@ -79,60 +82,86 @@ public class AnimalDAOImpl implements AnimalDAO {
         return dbConnection;
     }
 
+    //?????List<Integer>?????
     @Override
-    public void addAnimal(Animal animal) {
+    public List<Integer> addAnimal(Animal animal) {
+        Integer addedAnimal = null, addedKeeper = null, addedCage = null;
+        List<Integer> added = new LinkedList<>();
 
         try(Connection dbConnection = getDBConnection();
             Statement stmt = dbConnection.createStatement();
             ResultSet resultSetA = stmt.executeQuery("SELECT COUNT(*) FROM animal");
-            PreparedStatement pStatement = dbConnection.prepareStatement(InsertAnimal);
+
+            PreparedStatement pStatement = dbConnection.prepareStatement(InsertAnimal, PreparedStatement.RETURN_GENERATED_KEYS);
             PreparedStatement kpStatement = dbConnection.prepareStatement(setKeeper);
             PreparedStatement cpStatement = dbConnection.prepareStatement(setCage)) {
 
-            dbConnection.setAutoCommit(false);
+//            dbConnection.setAutoCommit(false);
 
-            resultSetA.next();
-            int lastAnimalsID = resultSetA.getInt(1);
-            System.out.println("Сейчас максимальный Animal ID = "  + lastAnimalsID);
+//            resultSetA.next();
+//            int lastAnimalsID = resultSetA.getInt(1);
+//            System.out.println("Сейчас максимальный Animal ID = "  + (lastAnimalsID+1));
 
-            pStatement.setInt(1, lastAnimalsID+1);
-            pStatement.setString(2, animal.getName());
-            pStatement.setString(3, animal.getAnimalClass());
-            pStatement.setInt(4, animal.getAge());
+
+
+
+//            animal (name, animalClass, age)
+            pStatement.setString(1, animal.getName());
+            pStatement.setString(2, animal.getAnimalClass());
+            pStatement.setInt(3, animal.getAge());
+            addedAnimal = pStatement.executeUpdate();
+
+            try (ResultSet generatedKeys =  pStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    animal.setId(generatedKeys.getInt(1));
+                }
+                else {
+                    throw new SQLException("Creating user failed, no ID obtained.");
+                }
+            }
+
+            System.out.println(" System.out.println(lastAnimalsID+1);" + animal.getId());
 
             //(animalID, keeperID) VALUES (?, ?)
             kpStatement.setInt(1, animal.getId());
             kpStatement.setInt(2, animal.getKeeper().getId());
+            addedKeeper = kpStatement.executeUpdate();
+
 
             //(animalID, cageID) VALUES (?, ?)
             cpStatement.setInt(1, animal.getId());
+            System.out.println(" System.out.println(lastAnimalsID+1);" + animal.getId());
             cpStatement.setInt(2, animal.getCage().getCageID());
+            addedCage = cpStatement.executeUpdate();
 
-            pStatement.executeUpdate();
-            kpStatement.executeUpdate();
-            cpStatement.executeUpdate();
 
-            dbConnection.commit();
+            added.add(addedAnimal);
+            added.add(addedKeeper);
+            added.add(addedCage);
+
+//            dbConnection.commit();
 
         }catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return added;
     }
 
     @Override
     public void updateAnimal(Animal animal) {
 
         try(Connection dbConnection = getDBConnection();
-            PreparedStatement pStatement = dbConnection.prepareStatement(InsertAnimal);
+            PreparedStatement pStatement = dbConnection.prepareStatement(updateAnimal);
             PreparedStatement kpStatement = dbConnection.prepareStatement(updateKeeper);
             PreparedStatement cpStatement = dbConnection.prepareStatement(updateCage)) {
 
             dbConnection.setAutoCommit(false);
 
-            pStatement.setInt(1, animal.getId());
-            pStatement.setString(2, animal.getName());
-            pStatement.setString(3, animal.getAnimalClass());
-            pStatement.setInt(4, animal.getAge());
+//            animal.name = ?, animal.animalClass = ?, animal.age = ? WHERE animal.id = ?
+            pStatement.setString(1, animal.getName());
+            pStatement.setString(2, animal.getAnimalClass());
+            pStatement.setInt(3, animal.getAge());
+            pStatement.setInt(4, animal.getId());
 
             //SET keeperID = ? WHERE animalID = ?
             kpStatement.setInt(1, animal.getKeeper().getId());
@@ -245,11 +274,12 @@ public class AnimalDAOImpl implements AnimalDAO {
         List<Animal> animals = new LinkedList<>();
 
         try(Connection dbConnection = getDBConnection();
-            Statement stmt = dbConnection.createStatement();
-            ResultSet resultSetA = stmt.executeQuery(getFullALLAnimal)) {
+//            Statement stmt = dbConnection.createStatement();
+            PreparedStatement stmt = dbConnection.prepareStatement(getFullALLAnimal);
+            ResultSet resultSetA = stmt.executeQuery()) {
 
 
-            dbConnection.setAutoCommit(false);
+//            dbConnection.setAutoCommit(false);
             while (resultSetA.next()) {
 
                 Animal animal = new Animal();
@@ -288,7 +318,7 @@ public class AnimalDAOImpl implements AnimalDAO {
                 }
                 animals.add(animal);
             }
-            dbConnection.commit();
+//            dbConnection.commit();
         }catch (SQLException e) {
             System.out.println(e.getMessage());
         }

@@ -14,7 +14,7 @@ import java.util.List;
 //Maybe <T>?
 public interface AnimalDAO {
 
-    public void addAnimal(Animal animal);
+    public List<Integer> addAnimal(Animal animal);
 
     public void updateAnimal(Animal animal);
 
