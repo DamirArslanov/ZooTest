@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page session="false" %>
 <html>
 <head>
     <title>Zoo Management</title>
@@ -43,6 +44,7 @@
     <%--</script>--%>
 
     <script>
+        var rowId = '';
         $(document).ready(function () {
             var table =  $('#animals').DataTable( {
                 ajax: {
@@ -69,20 +71,20 @@
 
                 ],
                 columns: [
-                    {data: 'name'},
-                    {data: 'age'},
-                    {data: 'animalClass'},
-                    {data: 'cage.number'},
-                    {data: null, render: function ( data, type, row ) {
-
-                        return data.keeper.name+' '+data.keeper.surname;
+                    { data: 'name'},
+                    { data: 'age'},
+                    { data: 'animalClass'},
+                    { data: 'cage', render: function ( data, type, row ) {
+                        return data.number;
                     } },
-                    {data : 'id'}
+//                    { data: 'cage.number'},
+                    { data: 'keeper', render: function ( data, type, row ) {
+                        return data.nameSurname;
+                    } },
+//                    { data: "keeper.nameSurname"},
+                    { data : 'id'}
                 ]
             });
-
-
-
 
             $('#animals tbody').on( 'click', '#delete', function () {
                 var data = table.row( $(this).parents('tr') ).data();
@@ -100,10 +102,12 @@
             $('#animals tbody').on( 'click', '#edit', function () {
                 console.log('Вошли по клику EDIT')
                 var data = table.row( $(this).parents('tr') ).data();
+                rowId = table.row( $(this).parents('tr') ).index();
                 $("#name").val(data.name);
                 $("#animalClass").val(data.animalClass);
                 $("#age").val(data.age);
-                $("#keeper").val(data.keeper.name+' '+data.keeper.surname);
+//                $("#keeper").val(data.keeper.name+' '+data.keeper.surname);
+                $("#keeper").val(data.keeper.nameSurname);
                 $("#cage").val(data.cage.number);
                 $("#id").val(data.id);
             } );
@@ -117,26 +121,24 @@
                             sendData,
                             function(data){
                                 var table = $('#animals').DataTable();
-//                            table.ajax.reload();
-//                            if (sendData.id === undefined) {
-//                                console.log(sendData.id === undefined);
-//                                console.log(sendData.name);
-//                            }
-                                console.log(
-                                        data.name,
-                                        data.age,
-                                        data.animalClass,
-                                        data.cage.cageID,
-                                        data.keeper.name+' '+data.keeper.surname,
-                                        data.id);
-                                table.row.add( [
-                                    data.name,
-                                    data.age,
-                                    data.animalClass,
-                                    data.cage.number,
-                                    data.keeper.name+' '+data.keeper.surname,
-                                    data.id] )
-                                        .draw();
+
+                                if (rowId == '') {
+                                    table.row.add({
+                                        'name': data.name,
+                                        'age': data.age,
+                                        'animalClass': data.animalClass,
+                                        'cage': data.cage,
+                                        'keeper': data.keeper,
+                                        'id': data.id
+                                    })
+                                            .draw();
+                                    rowId = '';
+                                    jQuery('#animalForm').get(0).reset();
+
+                                } else {
+                                    table.row(rowId).data(data).draw();
+                                }
+
 
                             });
                     return false;
@@ -222,7 +224,7 @@
 
 </head>
 <body>
-<%--<c:if test="${!empty animals}">--%>
+
     <table id="animals">
         <thead>
             <tr>
@@ -236,20 +238,8 @@
                 <th>Удалить</th>
             </tr>
         </thead>
-        <%--<tbody>--%>
-            <%--<c:forEach items="${animals}" var="animal">--%>
-                <%--<tr>--%>
-                    <%--<td>${animal.name}</td>--%>
-                    <%--<td>${animal.age}</td>--%>
-                    <%--<td>${animal.animalClass}</td>--%>
-                    <%--<td>${animal.cage.number}</td>--%>
-                    <%--<td>${animal.keeper.getFIO()}</td>--%>
-
-                <%--</tr>--%>
-            <%--</c:forEach>--%>
-        <%--<tbody>--%>
     </table>
-<%--</c:if>--%>
+
 <hr/>
     <form id="animalForm">
         <fieldset>
@@ -295,3 +285,4 @@
     </form>
 </body>
 </html>
+
