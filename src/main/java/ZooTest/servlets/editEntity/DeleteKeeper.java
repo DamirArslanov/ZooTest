@@ -24,9 +24,16 @@ public class DeleteKeeper extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String id = (request.getParameter("id"));
-        if (id != null) {
+        if (id != null || !id.equals("")) {
             keeperDAO.deleteKeeper(Integer.parseInt(id));
+            response.setContentType("text/plain");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("Смотритель удалён!");
         }
-        response.sendRedirect(request.getContextPath() + "/keepers");
+        else {
+            response.setContentType("text/plain");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("Питомец не удален! Попробуйте снова.");
+        }
     }
 }

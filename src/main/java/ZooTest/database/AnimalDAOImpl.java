@@ -64,6 +64,9 @@ public class AnimalDAOImpl implements AnimalDAO {
             "LEFT JOIN cage ON cage_animals.cageID = cage.cageID";
 
 
+    private String searchKeeper = "SELECT keeper.keeperID FROM keeper WHERE keeper.name = ? AND keeper.surname = ?";
+
+
 
 
     private Connection getDBConnection() {
@@ -91,8 +94,8 @@ public class AnimalDAOImpl implements AnimalDAO {
         try(Connection dbConnection = getDBConnection();
             Statement stmt = dbConnection.createStatement();
             ResultSet resultSetA = stmt.executeQuery("SELECT COUNT(*) FROM animal");
-
             PreparedStatement pStatement = dbConnection.prepareStatement(InsertAnimal, PreparedStatement.RETURN_GENERATED_KEYS);
+            PreparedStatement getKeeperStmt = dbConnection.prepareStatement(searchKeeper);
             PreparedStatement kpStatement = dbConnection.prepareStatement(setKeeper);
             PreparedStatement cpStatement = dbConnection.prepareStatement(setCage)) {
 
@@ -103,6 +106,13 @@ public class AnimalDAOImpl implements AnimalDAO {
 //            System.out.println("Сейчас максимальный Animal ID = "  + (lastAnimalsID+1));
 
 
+
+//            keeper.name = ? AND keeper.surname = ?
+            getKeeperStmt.setString(1, animal.getKeeper().getName());
+            getKeeperStmt.setString(2, animal.getKeeper().getSurname());
+            ResultSet getKeeperResult = getKeeperStmt.executeQuery();
+            getKeeperResult.next();
+            int keeperID = getKeeperResult.getInt(1);
 
 
 //            animal (name, animalClass, age)
@@ -120,17 +130,16 @@ public class AnimalDAOImpl implements AnimalDAO {
                 }
             }
 
-            System.out.println(" System.out.println(lastAnimalsID+1);" + animal.getId());
 
             //(animalID, keeperID) VALUES (?, ?)
             kpStatement.setInt(1, animal.getId());
-            kpStatement.setInt(2, animal.getKeeper().getId());
+            kpStatement.setInt(2, keeperID);
             addedKeeper = kpStatement.executeUpdate();
 
 
             //(animalID, cageID) VALUES (?, ?)
             cpStatement.setInt(1, animal.getId());
-            System.out.println(" System.out.println(lastAnimalsID+1);" + animal.getId());
+
             cpStatement.setInt(2, animal.getCage().getCageID());
             addedCage = cpStatement.executeUpdate();
 
@@ -152,10 +161,18 @@ public class AnimalDAOImpl implements AnimalDAO {
 
         try(Connection dbConnection = getDBConnection();
             PreparedStatement pStatement = dbConnection.prepareStatement(updateAnimal);
+            PreparedStatement getKeeperStmt = dbConnection.prepareStatement(searchKeeper);
             PreparedStatement kpStatement = dbConnection.prepareStatement(updateKeeper);
             PreparedStatement cpStatement = dbConnection.prepareStatement(updateCage)) {
 
-            dbConnection.setAutoCommit(false);
+
+            getKeeperStmt.setString(1, animal.getKeeper().getName());
+            getKeeperStmt.setString(2, animal.getKeeper().getSurname());
+            ResultSet getKeeperResult = getKeeperStmt.executeQuery();
+            getKeeperResult.next();
+            int keeperID = getKeeperResult.getInt(1);
+
+//            dbConnection.setAutoCommit(false);
 
 //            animal.name = ?, animal.animalClass = ?, animal.age = ? WHERE animal.id = ?
             pStatement.setString(1, animal.getName());
@@ -164,18 +181,18 @@ public class AnimalDAOImpl implements AnimalDAO {
             pStatement.setInt(4, animal.getId());
 
             //SET keeperID = ? WHERE animalID = ?
-            kpStatement.setInt(1, animal.getKeeper().getId());
+            kpStatement.setInt(1, keeperID);
             kpStatement.setInt(2, animal.getId());
 
             //SET cageID = ? WHERE animalID = ?
             cpStatement.setInt(1, animal.getCage().getCageID());
             cpStatement.setInt(2, animal.getId());
 
-            pStatement.executeUpdate();
+
             kpStatement.executeUpdate();
             cpStatement.executeUpdate();
-
-            dbConnection.commit();
+            pStatement.executeUpdate();
+//            dbConnection.commit();
 
         }catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -222,6 +239,7 @@ public class AnimalDAOImpl implements AnimalDAO {
                 keeper.setName(keeperResult.getString("name"));
                 System.out.println(keeper.getName());
                 keeper.setSurname(keeperResult.getString("surname"));
+                keeper.setNameSurname(keeper.getFIO());
                 System.out.println(keeper.getSurname());
                 System.out.println("--------------");
             }
@@ -249,18 +267,20 @@ public class AnimalDAOImpl implements AnimalDAO {
             PreparedStatement pStatement = dbConnection.prepareStatement(deleteAnimal);
             PreparedStatement kpStatement = dbConnection.prepareStatement(setNullInKeeper);
             PreparedStatement cpStatement = dbConnection.prepareStatement(setNullInCage)) {
+//
+//            dbConnection.setAutoCommit(false);
 
-            dbConnection.setAutoCommit(false);
 
-            pStatement.setInt(1, id);
             kpStatement.setInt(1, id);
             cpStatement.setInt(1,id);
+            pStatement.setInt(1, id);
 
-            pStatement.executeUpdate();
+
             kpStatement.executeUpdate();
             cpStatement.executeUpdate();
+            pStatement.executeUpdate();
 
-            dbConnection.commit();
+//            dbConnection.commit();
 
         }catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -303,6 +323,8 @@ public class AnimalDAOImpl implements AnimalDAO {
                     System.out.println("KeeperNAME: " + keeper.getName());
                     keeper.setSurname(resultSetA.getString(7));
                     System.out.println("KeeperSURNAME: " + keeper.getSurname());
+                    keeper.setNameSurname(keeper.getFIO());
+                    System.out.println("KeeperNameAndSurname: " + keeper.getNameSurname());
                     System.out.println("--------------");
                     animal.setKeeper(keeper);
                 } else animal.setKeeper(null);

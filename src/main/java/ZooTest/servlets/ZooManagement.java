@@ -1,10 +1,10 @@
 package ZooTest.servlets;
 
-import ZooTest.database.AnimalToDB;
-import ZooTest.database.DbInto;
-import ZooTest.database.DbToEntity;
+import ZooTest.database.interfaces.AnimalDAO;
 import ZooTest.entity.Animal;
-import ZooTest.utils.XmlFactory;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -21,28 +21,23 @@ import java.util.List;
  */
 @WebServlet("/management")
 public class ZooManagement extends HttpServlet {
-
-//    @Inject
-//    XmlFactory xmlFactory;
-//    @Inject
-//    AnimalToDB animalToDB;
-//    @Inject
-//    DbInto dbInto;
-
-
+    @Inject
+    private AnimalDAO animalDAO;
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("/zoo.jsp").forward(request, response);
+    }
 
-        DbToEntity dbToEntity = new DbToEntity();
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         List<Animal> animals = new ArrayList<>();
-
-        try {
-            animals = dbToEntity.getAllAnimalsInDB();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        req.setAttribute("animals", animals);
-        req.getRequestDispatcher("/zoo.jsp").forward(req, resp);
+        animals = animalDAO.getAllAnimals();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        response.getWriter().write(gson.toJson(animals));
+        System.out.println(gson.toJson(animals));
     }
 }

@@ -12,78 +12,129 @@
     <title>Keepers Management</title>
     <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
-    <%--<script src="/js/datatable/jquery-3.1.1.min.js"></script>--%>
-    <%--<link rel="stylesheet" type="text/css" href="/css/datatable/jquery.dataTables.css">--%>
-
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
-    <%--<script type="text/javascript" charset="utf8" src="/js/datatable/jquery.dataTables.js"></script>--%>
-
     <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
+
     <script>
-        $(document).ready(function(){
-            $('#keepers').DataTable();
+        var rowId = '';
+        $(document).ready(function () {
+            var table = $('#keepers').DataTable({
+                ajax: {
+                    type: 'POST',
+                    url: '/keepers',
+                    dataSrc: ''
+                },
+                columnDefs: [
+                    {
+                        "targets": 2,
+                        "visible": false,
+                        "searchable": false
+                    },
+                    {
+                        "targets": 3,
+                        "data": null,
+                        "defaultContent": "<button id='edit'>Редактировать</button>"
+                    },
+                    {
+                        "targets": 4,
+                        "data": null,
+                        "defaultContent": "<button id='delete'>Удалить</button>"
+                    }
+                ],
+                columns: [
+                    {data: 'name'},
+                    {data: 'surname'},
+                    {data: 'id'}
+                ]
+            });
+
+            $('#keepers tbody').on('click', '#edit', function () {
+                console.log('Вошли по клику EDIT')
+                var data = table.row($(this).parents('tr')).data();
+                rowId = table.row($(this).parents('tr')).index();
+
+                $("#name").val(data.name);
+                $("#surname").val(data.surname);
+                $("#id").val(data.id);
+            });
+
+            $('#keepers tbody').on('click', '#delete', function () {
+                var data = table.row($(this).parents('tr')).data();
+                console.log('ID удаленого смотрителя' + data.id);
+                $.get("/deletekeeper", {id: data.id}, function (data) {
+                    alert(data);
+                });
+                table
+                        .row($(this).parents('tr'))
+                        .remove()
+                        .draw();
+            });
+
+            $(function () {
+                $("#submit").click(function () {
+                    var sendData = $('#form').serialize();
+                    $.post("/editkeeper",
+                            sendData,
+                            function (data) {
+                                var table = $('#keepers').DataTable();
+
+                                if (rowId == '') {
+                                    table.row.add({
+                                        'name': data.name,
+                                        'surname': data.surname,
+                                        'id': data.id
+                                    })
+                                            .draw();
+
+                                    jQuery('#form').get(0).reset();
+
+                                } else {
+                                    table.row(rowId).data(data).draw();
+                                    rowId = '';
+                                    jQuery('#form').get(0).reset();
+                                }
+
+                            });
+                    return false;
+                });
+            });
+
         });
     </script>
 
 </head>
 <body>
-    <c:if test="${!empty keepers}">
-        <table id="keepers">
-            <thead>
-                <tr>
-                    <th>Имя</th>
-                    <th>Фамилия</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-            <c:forEach items="${keepers}" var="keeper">
-            <tr>
-                <td>${keeper.name}</td>
-                <td>${keeper.surname}</td>
-                <td><a href="${pageContext.request.contextPath}/editkeeper?id=${keeper.id}">Редактировать</a></td>
-                <td><a href="${pageContext.request.contextPath}/deletekeeper?id=${keeper.id}">Удалить</a></td>
-            </tr>
-            </c:forEach>
-            <tbody>
-        </table>
-    </c:if>
+<table id="keepers">
+    <thead>
+    <tr>
+        <th>Имя</th>
+        <th>Фамилия</th>
+        <th>id</th>
+        <th>Редактировать</th>
+        <th>Удалить</th>
+    </tr>
+    </thead>
+</table>
 <hr/>
-    <form method="post"
-          action="${pageContext.request.contextPath}/editkeeper" id="formId">
-        <fieldset>
-            <legend>
-                <c:choose>
-                    <c:when test="${not empty keeper.id }">
-                        Обновить смотрителя
-                    </c:when>
-                    <c:otherwise>
-                        Добавить смотрителя
-                    </c:otherwise>
-                </c:choose>
-            </legend>
+<form id="form">
+    Сохранить смотрителя
+    <div>
+        <label for="name">Имя</label> <input type="text" name="name"
+                                             id="name" value="${keeper.name}"/>
+    </div>
 
-            <div>
-                <label for="name">Имя</label> <input type="text" name="name"
-                                                        id="name" value="${keeper.name}" />
-            </div>
+    <div>
+        <label for="surname">Фамилия</label> <input type="text" name="surname" id="surname"
+                                                    value="${keeper.surname}"/>
+    </div>
 
-            <div>
-                <label for="surname">Фамилия</label> <input type="text" name="surname" id="surname"
-                                                          value="${keeper.surname}" />
-            </div>
+    <div>
+        <label for="id">ID</label> <input type="text" name="id" id="id" value="${keeper.id}" readonly/>
+    </div>
 
-
-            <c:if test="${!empty keeper.id}">
-                <input type="hidden" name="id" value="${keeper.id}" />
-            </c:if>
-
-        </fieldset>
-
-        <div class="button-row">
-            <input type="submit" value="Submit" />
-        </div>
-    </form>
+    <div class="button-row">
+        <input type="submit" id="submit" value="Submit"/>
+    </div>
+</form>
 </body>
 </html>

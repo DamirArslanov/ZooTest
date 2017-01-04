@@ -21,9 +21,16 @@ public class DeleteCage extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = (request.getParameter("id"));
-        if (id != null) {
+        if (id != null || !id.equals("")) {
             cageDAO.deleteCage(Integer.parseInt(id));
+            response.setContentType("text/plain");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("Клетка удалена!");
         }
-        response.sendRedirect(request.getContextPath() + "/cages");
+        else {
+            response.setContentType("text/plain");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("Питомец не удален! Попробуйте снова.");
+        }
     }
 }

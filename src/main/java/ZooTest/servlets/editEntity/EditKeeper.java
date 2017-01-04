@@ -23,43 +23,49 @@ public class EditKeeper extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Integer id = Integer.parseInt(request.getParameter("id"));
 
-        if (id != null) {
-            Keeper keeper = keeperDAO.getKeeperByID(id);
-            request.setAttribute("keeper", keeper);
+        System.out.println("Вошли в Get /editkeeper");
+        Gson gson = new Gson();
+        String id = (request.getParameter("id"));
+
+        if (id != null || !id.equals("")) {
+            Keeper keeper = keeperDAO.getKeeperByID(Integer.parseInt(id));
+            request.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json");
+            response.getWriter().write(gson.toJson(keeper));
+            System.out.println(gson.toJson(keeper));
         }
-
-        List<Keeper> keepers = keeperDAO.getAllKeepers();
-
-        request.setAttribute("keepers", keepers);
-
-        getServletContext().getRequestDispatcher("/WEB-INF/keepers.jsp").forward(
-                request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        Gson gson = new Gson();
+        Keeper keeper = new Keeper();
 
         request.setCharacterEncoding("UTF-8");
-        Keeper keeper = new Keeper();
-        String name = request.getParameter("name");
 
+        String name = request.getParameter("name");
         keeper.setName(name);
+
         String surname = request.getParameter("surname");
         keeper.setSurname(surname);
         System.out.println(keeper.toString());
 
         String id = (request.getParameter("id"));
-        System.out.println("ID: " + id);
-        if (id == null) {
+        System.out.println("Полученный ID смотрителя : " + id);
+        if (id == null || id.equals("")) {
             keeperDAO.addKeeper(keeper);
         } else {
             keeper.setId(Integer.parseInt(id));
             keeperDAO.updateKeeper(keeper);
         }
+        System.out.println("Смотритель сохранен: ");
         System.out.println(keeper.toString());
-        response.sendRedirect(request.getContextPath() + "/keepers");
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(gson.toJson(keeper));
+        System.out.println("Сгенерированный JSON: ");
+        System.out.println(gson.toJson(keeper));
     }
 }

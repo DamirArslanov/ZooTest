@@ -34,15 +34,6 @@
             height: 100px;
         }
     </style>
-
-
-<%--<link rel="stylesheet" type="text/css" href="css/bluecss.css">--%>
-    <%--<script>--%>
-        <%--$(document).ready(function () {--%>
-            <%--$('#animals').DataTable();--%>
-        <%--});--%>
-    <%--</script>--%>
-
     <script>
         var rowId = '';
         $(document).ready(function () {
@@ -112,8 +103,6 @@
                 $("#id").val(data.id);
             } );
 
-
-
             $(function() {
                 $("#submit").click(function(){
                     var sendData = $('#animalForm').serialize();
@@ -144,16 +133,7 @@
                     return false;
                 });
             });
-
-
-
-
-
-
-
         });
-
-
     </script>
     <script>
         $(function () {
@@ -180,48 +160,6 @@
             })
         } );
     </script>
-    <%--<script>--%>
-        <%--$(function() {--%>
-            <%--$("#submit").click(function(){--%>
-                <%--var sendData = $('#animalForm').serialize();--%>
-                <%--$.post("/editanimal",--%>
-                        <%--sendData,--%>
-                        <%--function(data){--%>
-                            <%--var table = $('#animals').DataTable();--%>
-<%--//                            table.ajax.reload();--%>
-<%--//                            if (sendData.id === undefined) {--%>
-<%--//                                console.log(sendData.id === undefined);--%>
-<%--//                                console.log(sendData.name);--%>
-<%--//                            }--%>
-                            <%--var rowNode = table--%>
-                                    <%--.row.add( [ 'Музыка', "2", "Музыка", "1" , "Я", "4290"] )--%>
-                                    <%--.draw()--%>
-                                    <%--.node();--%>
-<%--//                            console.log(--%>
-<%--//                                    data.name,--%>
-<%--//                                    data.age,--%>
-<%--//                                    data.animalClass,--%>
-<%--//                                    data.cage.cageID,--%>
-<%--//                                    data.keeper.name+' '+data.keeper.surname,--%>
-<%--//                                    data.id)--%>
-                        <%--});--%>
-                <%--return false;--%>
-            <%--});--%>
-        <%--});--%>
-    <%--</script>--%>
-    <%--<script>--%>
-        <%--var table = $('#animals').DataTable();--%>
-
-        <%--$('#animals tbody').on( 'click', 'tr', function () {--%>
-            <%--alert('Popali');--%>
-            <%--table--%>
-                    <%--.row( $(this).parents('tr') )--%>
-                    <%--.remove()--%>
-                    <%--.draw();--%>
-        <%--} );--%>
-    <%--</script>--%>
-
-
 </head>
 <body>
 
