@@ -200,7 +200,7 @@
 
 
     <div class="customcontent">
-        <h3 style="color: #fff">Keeper Management</h3>
+        <h3 style="color: #fff; font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;">Keeper Management</h3>
         <div class="customtable">
             <table id="keepers" class="mdl-data-table mdl-typography-text-left">
                 <thead>

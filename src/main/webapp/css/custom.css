@@ -35,9 +35,6 @@ p {
     padding-top: 20px;
 }
 
-.dt-button{
-    border-radius: 0px;
-}
 
 .custombtn-default {
     color: #333;
@@ -98,6 +95,10 @@ p {
     border: 2px solid #ccc;
     padding: 5px 0;
     border-radius: 2px;
+}
+
+h3 {
+    font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
 }
 
 /*.dt-button{*/

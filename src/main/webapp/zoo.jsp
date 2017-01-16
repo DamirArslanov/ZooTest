@@ -97,7 +97,6 @@
                         "data": null,
                         "defaultContent": "<button   id='delete' class='custombtn'>Удалить</button>"
                     }
-
                 ],
                 columns: [
                     { data: 'name'},
@@ -262,7 +261,7 @@
     </div><!-- Navigation -->
 
     <div class="customcontent">
-        <h3 style="color: #fff;">Animal Management</h3>
+        <h3 style="color: #fff; font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;">Animal Management</h3>
         <div class="customtable">
             <table id="animals" class="mdl-data-table mdl-typography-text-left">
                 <thead>

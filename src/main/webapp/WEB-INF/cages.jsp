@@ -197,7 +197,7 @@
 </nav>
 
 <div class="customcontent">
-    <h3 style="color: #fff">Cage Management</h3>
+    <h3 style="color: #fff; font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;">Cage Management</h3>
     <div class="customtable">
         <table id="cages" class="mdl-data-table mdl-typography-text-left">
             <thead>

@@ -181,41 +181,47 @@ h1, h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
 }
 
 h1 small, h2 small, h3 small, h4 small, h5 small, h6 small {
+	font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     font-weight: 400;
     opacity: .54;
     font-size: .6em
 }
 
 h1, h2 {
+	 font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     font-weight: 400
 }
 
 h1 {
+	 font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     margin: 24px 0;
     font-size: 56px
 }
 
 h2, h3 {
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     margin: 24px 0
 }
 
 h2 {
+	 font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     font-size: 45px;
     line-height: 48px
 }
 
 h3, h4 {
+	 font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     font-weight: 400
 }
 
 h3 {
+	 font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     font-size: 34px;
     line-height: 40px
 }
 
 h4, h5 {
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif
+ font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
 }
 
 h4 {
@@ -237,7 +243,7 @@ h5 {
 }
 
 blockquote, h6 {
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif
+  
 }
 
 h6, p {
@@ -303,7 +309,7 @@ ol, ul {
 }
 
 .mdl-typography--display-4, .mdl-typography--display-4-color-contrast {
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     font-size: 112px;
     font-weight: 300;
     line-height: 1;
@@ -315,7 +321,7 @@ ol, ul {
 }
 
 .mdl-typography--display-3, .mdl-typography--display-3-color-contrast {
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     font-size: 56px;
     font-weight: 400;
     line-height: 1.35;
@@ -327,7 +333,7 @@ ol, ul {
 }
 
 .mdl-typography--display-2, .mdl-typography--display-2-color-contrast {
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
     font-size: 45px;
     font-weight: 400;
     line-height: 48px

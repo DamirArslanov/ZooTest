@@ -75,9 +75,6 @@ Although you can use them, for a more unique website, replace these images with 
                 <li class="active">
                     <a href="#">Home</a>
                 </li>
-                <!--      <li>
-                         <a href="#">Zoo Management</a>
-                     </li> -->
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Zoo Management <span class="caret"></span></a>
                     <ul class="dropdown-menu" aria-labelledby="about-us">
@@ -99,10 +96,10 @@ Although you can use them, for a more unique website, replace these images with 
 <!-- Header -->
 <header>
     <div class="header-content">
-        <div class="header-content-inner">
+        <div class="header-content-inner" style = "font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif">
             <h1>ZooLand</h1>
             <p>Create Your Zoo. Feel The Force.</p>
-            <a href="#" class="btn btn-primary btn-lg">Engage Now</a>
+            <a href="#" class="btn btn-primary btn-lg" style="border-radius: 300px;">Engage Now</a>
         </div>
     </div>
 </header>
