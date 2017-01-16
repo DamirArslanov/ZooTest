@@ -117,18 +117,15 @@
 
             });
 
-            $("#name").keyup(function()
-            {
+            $("#name").keyup(function() {
                 var name = $(this).val();
-                if(name.length > 1)
-                {
+                if(name.length > 1) {
                     $("#result").html('checking...');
                     $.ajax({
                         type : 'GET',
                         url  : '/search',
                         data : $(this).serialize(),
-                        success : function(data)
-                        {
+                        success : function(data) {
                             if (data == 'true') {
                                 $("#result").html("<div id='result' style='color:brown'>Имя питомца занято!</div>");
                                 $('#submit').attr("disabled", true);
@@ -142,8 +139,7 @@
                     });
                     return false;
                 }
-                else
-                {
+                else {
                     $("#result").html('');
                 }
             });
