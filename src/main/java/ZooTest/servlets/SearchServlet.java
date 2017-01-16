@@ -30,10 +30,12 @@ public class SearchServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         response.setCharacterEncoding("UTF-8");
         System.out.println("SearchServlet GET");
         String searchAnimal = request.getParameter("name");
         System.out.println("Пришел запрос на поиск питомца: " + searchAnimal);
+
         Animal animal = animalDAO.findAnimalByName(searchAnimal);
         System.out.println(animal.toString());
         if (animal != null && animal.getId() != 0) {

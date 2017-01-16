@@ -107,7 +107,6 @@
                     } },
                     { data: 'keeper', render: function ( data, type, row ) {
                         if (data == null) {
-//                            console.log(type.toString())
                             return null;
                         } else {
                             return data.name + " " + data.surname;
@@ -134,7 +133,6 @@
                                 $("#result").html("<div id='result' style='color:brown'>Имя питомца занято!</div>");
                                 $('#submit').attr("disabled", true);
                             }
-//                            $("#result").html(data);
                             else if (data == 'false') {
                                 $("#result").html("<div id='result' style='color:green'>Имя питомца свободно!</div>");
                                 $('#submit').attr("disabled", false);
