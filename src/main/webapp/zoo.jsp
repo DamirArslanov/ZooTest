@@ -54,6 +54,8 @@
     <script type="text/javascript" charset="utf8" src="/js/datatable/jquery.dataTables.js"></script>
     <script type="text/javascript" charset="utf8" src=" https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
 
+    <%--VALIDATION--%>
+    <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/jquery.validate.js"></script>
 
     <script>
 
@@ -143,6 +145,85 @@
                     $("#result").html('');
                 }
             });
+
+
+
+            $("#form").validate({
+
+                rules:
+                {
+                    name: {
+                        required: true,
+                        minlength: 3
+                    },
+                    animalClass: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 20
+                    },
+                    age: {
+                        required: true,
+                        minlength: 1,
+                        number: true
+                    },
+                    keeper: {
+                        required: true,
+                        minlength: 3
+                    },
+                    cage: {
+                        required: true,
+                        minlength: 1,
+                        number: true
+                    },
+                },
+                messages:
+                {
+                    name: {
+                        required: "Введите имя питомца!",
+                        minlength: "Имя слишком короткое!"
+                    },
+                    animalClass: {
+                        required: "Введите класс питомца!",
+                        minlength: "Имя класса слишком короткое!"
+                    },
+                    age:{
+                        required: "Введите возраст питомца!",
+                        minlength: "Введите возраст питомца!",
+                        number: "Допустимо только числовое значение!"
+                    },
+                    keeper: {
+                        required: "Введите смотрителя!",
+                        minlength: "Имя слишком короткое!"
+                    },
+                    cage:{
+                        required: "Введите клетку питомца!",
+                        minlength: "Введите клетку питомца!",
+                        number: "Допустимо только числовое значение!"
+                    }
+                },
+                errorPlacement : function(error, element) {
+                    $(element).closest('.form-group').find('.help-block').html(error.html());
+                    $('#submit').attr("disabled", true);
+                },
+                highlight : function(element) {
+                    $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+                    $('#submit').attr("disabled", true);
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+                    $(element).closest('.form-group').find('.help-block').html('');
+                    $('#submit').attr("disabled", false);
+                },
+
+                submitHandler: function(form) {
+                    $('#submit').attr("disabled", true);
+                    form.submit();
+                    alert('ok');
+                }
+            });
+
+
+
 
             $('#animals tbody').on( 'click', '#delete', function () {
                 var data = table.row( $(this).parents('tr') ).data();
@@ -318,7 +399,7 @@
                 <h4 class="modal-title">Сохранить питомца</h4>
             </div>
             <div class="modal-body">
-                <form id="form" class="form-horizontal">
+                <form id="form" name="form" class="form-horizontal">
                     <fieldset>
 
                         <div class="form-group">
@@ -327,6 +408,7 @@
                             <div class="col-md-10">
                                 <input type="text" class="form-control" name="name" id="name" placeholder="Имя питомца должно быть уникально">
                                 <%--<p id="result"></p>--%>
+                                <div class="help-block" id="error"></div>
                                 <div id="result"></div>
                             </div>
                         </div>
@@ -336,6 +418,7 @@
                             <div class="col-md-10">
                                 <input type="text" class="form-control" name="animalClass" id="animalClass"
                                        placeholder="Класс питомца">
+                                <div class="help-block" id="error"></div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -343,6 +426,7 @@
 
                             <div class="col-md-10">
                                 <input type="text" class="form-control" id="age" name="age" placeholder="Возраст питомца">
+                                <div class="help-block" id="error"></div>
                             </div>
                         </div>
 
@@ -352,6 +436,7 @@
                             <div class="col-md-10">
                                 <input type="text" class="form-control ui-widget" id="keeper" name="keeper"
                                        placeholder="Введите имя действующего смотрителя">
+                                <div class="help-block" id="error"></div>
                             </div>
                         </div>
 
@@ -360,6 +445,7 @@
 
                             <div class="col-md-10">
                                 <input type="text" class="form-control" id="cage" name="cage" placeholder="Клетка">
+                                <div class="help-block" id="error"></div>
                             </div>
                         </div>
 
