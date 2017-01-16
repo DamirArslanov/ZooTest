@@ -45,10 +45,13 @@ public class EditAnimal extends HttpServlet {
         Animal animal = new Animal();
 
         String name = request.getParameter("name");
+        System.out.println(name);
         animal.setName(name);
         String animalClass = request.getParameter("animalClass");
+        System.out.println(animalClass);
         animal.setAnimalClass(animalClass);
         String age = request.getParameter("age");
+        System.out.println(age);
         animal.setAge(Integer.parseInt(age));
         String tempKeeper = request.getParameter("keeper");
         String[] FIO = tempKeeper.split(" ", 2);
@@ -59,10 +62,10 @@ public class EditAnimal extends HttpServlet {
         keeper.setNameSurname(keeper.getFIO());
         animal.setKeeper(keeper);
 
-        String cageID = request.getParameter("cage");
+        String cageNumber = request.getParameter("cage");
         Cage cage = new Cage();
-        cage.setCageID(Integer.parseInt(cageID));
-        cage.setNumber(cage.getCageID());
+        cage.setNumber(Integer.parseInt(cageNumber));
+//        cage.setNumber(cage.getCageID());
         animal.setCage(cage);
 
         String id = (request.getParameter("id"));

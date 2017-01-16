@@ -1,11 +1,12 @@
 package ZooTest.servlets;
 
 import ZooTest.entity.Animal;
-import ZooTest.entity.AnimalsList;
+import ZooTest.entity.Animals;
+import ZooTest.utils.XMLtoDB;
 import ZooTest.utils.XmlFactory;
-import jdk.internal.util.xml.impl.ReaderUTF8;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -15,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.*;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by ArslanovDamir on 15.12.2016.
@@ -23,58 +26,35 @@ import java.io.*;
 @MultipartConfig(fileSizeThreshold=1024*1024*2, // 2MB
         maxFileSize=1024*1024*100,      // 100MB
         maxRequestSize=1024*1024*100)   // 100MB
+
 public class FileUpload extends HttpServlet {
-    private static final Logger LOG = LogManager.getLogger(FileUpload.class);
 
-
-    private static final String SAVE_DIR = "D:\\";
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("Попали в GET UploadServlet");
+        request.getRequestDispatcher("/upload.jsp").forward(request, response);
+    }
 
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response) throws ServletException, IOException {
-//        // gets absolute path of the web application
-//        String appPath = request.getServletContext().getRealPath("");
-//        // constructs path of the directory to save uploaded file
-//        String savePath = File.separator + SAVE_DIR;
-//
-//        // creates the save directory if it does not exists
-//        File fileSaveDir = new File(savePath);
-//        if (!fileSaveDir.exists()) {
-//            fileSaveDir.mkdir();
-//        }
+        System.out.println("Попали в POST UploadServlet");
 
-//        for (Part part : request.getParts()) {
-//            String fileName = extractFileName(part);
-//            // refines the fileName in case it is an absolute path
-//            fileName = new File(fileName).getName();
-//            part.write(savePath + File.separator + fileName);
-//        }
 
+        Boolean record = Boolean.valueOf(request.getParameter("record"));
         Part filePart = request.getPart("file");
-
 
         InputStream fileContent = filePart.getInputStream();
         XmlFactory xmlFactory = new XmlFactory();
-        AnimalsList animalsList = xmlFactory.unmarshallFile(fileContent);
+        Animals animalsList = xmlFactory.unmarshallFile(fileContent);
+        XMLtoDB xmLtoDB = new XMLtoDB();
+        Set<Animal> fault = xmLtoDB.insertDB(animalsList, record);
 
-//        byte[] buffer = new byte[fileContent.available()];
-//        fileContent.read(buffer);
 
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
         PrintWriter printWriter = response.getWriter();
-        for (Animal animal : animalsList.getAllAnimals()) {
-            printWriter.print(animal.getName());
-            printWriter.print(animal.getAge());
-            printWriter.print(animal.getKeeper().getName());
-        }
-//        printWriter.print(fileContent.read());
-//        Reader reader = new ReaderUTF8(fileContent);
-//        BufferedReader bufferedReader = new BufferedReader(reader);
-//        System.out.println(bufferedReader.readLine());
-
-
-
-//        request.setAttribute("message", "Upload has been done successfully!");
-//        request.getRequestDispatcher("/message.jsp").forward(
-//                request, response);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        printWriter.write(gson.toJson(fault));
     }
 
     private String extractFileName(Part part) {

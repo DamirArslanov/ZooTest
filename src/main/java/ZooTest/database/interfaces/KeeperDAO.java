@@ -3,6 +3,7 @@ package ZooTest.database.interfaces;
 import ZooTest.entity.Keeper;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by ArslanovDamir on 16.12.2016.
@@ -10,7 +11,7 @@ import java.util.List;
 //Maybe <T>?
 public interface KeeperDAO {
 
-    public Integer addKeeper(Keeper keeper);
+    public void addKeeper(Keeper keeper);
 
     public void updateKeeper(Keeper keeper);
 
@@ -19,5 +20,7 @@ public interface KeeperDAO {
     public void deleteKeeper(int id);
 
     public List<Keeper> getAllKeepers();
+
+    public Keeper findKeeperByNameSurname(String name, String surname);
 }
 

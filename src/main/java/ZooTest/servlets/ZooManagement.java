@@ -32,12 +32,12 @@ public class ZooManagement extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        System.out.println("Попали в POST");
         List<Animal> animals = new ArrayList<>();
         animals = animalDAO.getAllAnimals();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         response.getWriter().write(gson.toJson(animals));
-        System.out.println(gson.toJson(animals));
     }
 }

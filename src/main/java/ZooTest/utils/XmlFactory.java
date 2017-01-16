@@ -1,15 +1,16 @@
 package ZooTest.utils;
 
-import ZooTest.entity.AnimalsList;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import ZooTest.entity.Animals;
 
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 /**
  * Created by ArslanovDamir on 15.12.2016.
@@ -17,28 +18,30 @@ import java.io.InputStream;
 
 public class XmlFactory {
 
-    public void marshallFile(AnimalsList animalsList) {
+    public File marshallFile(Animals animals) {
         try {
-            JAXBContext context = JAXBContext.newInstance(animalsList.getClass());
+            File file = new File("test.xml");
+            JAXBContext context = JAXBContext.newInstance(animals.getClass());
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            //Переписать под возвращение файла
-            marshaller.marshal(animalsList, System.out);
+            marshaller.marshal(animals, file);
+            return file;
         } catch (JAXBException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
-    public AnimalsList unmarshallFile(InputStream inputStream) {
-        AnimalsList animalsList = null;
+    public Animals unmarshallFile(InputStream inputStream) {
+        Animals animals = null;
         try {
-            JAXBContext context = JAXBContext.newInstance(AnimalsList.class);
+            JAXBContext context = JAXBContext.newInstance(Animals.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            animalsList = (AnimalsList) unmarshaller.unmarshal(inputStream);
+            animals = (Animals) unmarshaller.unmarshal(inputStream);
 
         } catch (JAXBException e) {
             e.printStackTrace();
         }
-        return animalsList;
+        return animals;
     }
 }

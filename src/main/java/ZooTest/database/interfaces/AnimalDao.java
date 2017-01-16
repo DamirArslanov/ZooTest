@@ -14,7 +14,7 @@ import java.util.List;
 //Maybe <T>?
 public interface AnimalDAO {
 
-    public List<Integer> addAnimal(Animal animal);
+    public void addAnimal(Animal animal);
 
     public void updateAnimal(Animal animal);
 
@@ -23,6 +23,8 @@ public interface AnimalDAO {
     public void deleteAnimal(int id);
 
     public List<Animal> getAllAnimals();
+
+    public Animal findAnimalByName(String name);
 
 
 }

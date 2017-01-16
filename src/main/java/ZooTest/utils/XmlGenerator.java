@@ -1,21 +1,13 @@
 package ZooTest.utils;
 
 import ZooTest.entity.Animal;
-import ZooTest.entity.AnimalsList;
+import ZooTest.entity.Animals;
 import ZooTest.entity.Cage;
 import ZooTest.entity.Keeper;
-import com.sun.jndi.toolkit.url.Uri;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * Created by ArslanovDamir on 16.12.2016.
@@ -23,8 +15,7 @@ import java.util.stream.Stream;
 public class XmlGenerator {
 
 
-    public AnimalsList getAnimals () throws FileNotFoundException {
-        long start = System.nanoTime();
+    public Animals getAnimals () throws FileNotFoundException {
         Scanner scanner;
         List<Animal> animals = new ArrayList<>();
 
@@ -62,22 +53,28 @@ public class XmlGenerator {
         int keepercount = 1;
 
         for (int i = 0; i < femaleFirstName.size(); i++) {
+
+            //Создадим клетку с id и номером клетки
             Cage cage = new Cage();
             cage.setCageID(cageCount);
             cage.setNumber(cageCount);
 
 
+            //Создадим смотрителя
             Keeper keeper = new Keeper();
             keeper.setId(keepercount);
+            //Возьмем случайное имя и фамилию
             keeper.setName(maleFirst.get(random.nextInt(maleFirst.size())));
             keeper.setSurname(lastName.get(random.nextInt(lastName.size())));
-            List<Integer> kAnimal = new ArrayList<>();
-            List<Integer> animalID = new LinkedList<>();
-            keeper.setKeepAnimals(animalID);
+            keeper.setNameSurname(keeper.getFIO());
+
+            //Пусть у каждого смотрителя будет 10 питомцев, для начала.
             for (int k = 0; k < 10; k++) {
                 Animal animal = new Animal();
 
+                //Пока не превысили лимит
                 if (i < femaleFirstName.size()) {
+                    //Возьмем имя из i - той строки
                     animal.setName(femaleFirstName.get(i));
                     i++;
                     animal.setId(i);
@@ -88,28 +85,19 @@ public class XmlGenerator {
                 animal.setCage(cage);
                 animal.setAnimalClass(animalClass.get(random.nextInt(animalClass.size())));
 
-                keeper.getKeepAnimals().add(animal.getId());
+                //Питомцу установим смотрителя
                 animal.setKeeper(keeper);
-                kAnimal.add(i);
                 animals.add(animal);
             }
 
 
+            //
             keepercount++;
-            //КИПЕР НЕ БУДЕТ ОБНОВЛЕН - УДАЛИТЬ И ПОЧИСТИТЬ КОД
-
-
-            kAnimal.clear();
             i--;
             cageCount++;
         }
-        AnimalsList animalsList = new AnimalsList();
-        animalsList.setAllAnimals(animals);
-
-
-        long end = System.nanoTime();
-        long traceTime = end-start;
-        System.out.println("Время " + traceTime);
+        Animals animalsList = new Animals();
+        animalsList.setAnimalList(animals);
 
         return animalsList;
     }

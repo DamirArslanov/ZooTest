@@ -1,16 +1,18 @@
 CREATE TABLE `animal` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `animalClass` varchar(50) NOT NULL,
   `age` INT(11) NOT NULL,
-  CONSTRAINT pk_animal PRIMARY KEY (id)
+  CONSTRAINT pk_animal PRIMARY KEY (id),
+  UNIQUE (name)
 ) ENGINE=InnoDB;
 
 CREATE TABLE `keeper` (
-  `keeperID` INT(11) NOT NULL,
+  `keeperID` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(50) NOT NULL,
   `surname` VARCHAR(50) NOT NULL,
-  CONSTRAINT pk_keeper PRIMARY KEY (keeperID)
+  CONSTRAINT pk_keeper PRIMARY KEY (keeperID),
+  UNIQUE (name, surname)
 )ENGINE=InnoDB;
 
 CREATE TABLE `keeper_animals` (
@@ -22,9 +24,10 @@ CREATE TABLE `keeper_animals` (
 )ENGINE=InnoDB;
 
 CREATE TABLE `cage` (
-  `cageID` INT(11) NOT NULL,
-  `number` VARCHAR(50) NOT NULL,
-  CONSTRAINT pk_cage PRIMARY KEY (cageID)
+  `cageID` INT(11) NOT NULL AUTO_INCREMENT,
+  `number` INT(11) NOT NULL,
+  CONSTRAINT pk_cage PRIMARY KEY (cageID),
+  UNIQUE (number)
 ) ENGINE=InnoDB;
 
 CREATE TABLE `cage_animals` (
@@ -111,6 +114,3 @@ UPDATE cage_animals SET cageID = ? WHERE animalID = ?;
 INSERT INTO keeper_animals (animalID, keeperID) VALUES (?, ?);
 INSERT INTO cage_animals (animalID, cageID) VALUES (?, ?);
 
-
-
-SELECT animal.id, animal.name, animal.animalClass, animal.age FROM animal WHERE animal.id = 3;

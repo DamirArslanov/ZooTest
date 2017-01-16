@@ -276,13 +276,17 @@ table.dataTable td {
   clear: both;
   *zoom: 1;
   zoom: 1;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 .dataTables_wrapper .dataTables_length {
   float: left;
+
 }
 .dataTables_wrapper .dataTables_filter {
   float: right;
   text-align: right;
+
 }
 .dataTables_wrapper .dataTables_filter input {
   margin-left: 0.5em;
@@ -291,6 +295,7 @@ table.dataTable td {
   clear: both;
   float: left;
   padding-top: 0.755em;
+
 }
 .dataTables_wrapper .dataTables_paginate {
   float: right;
@@ -334,6 +339,7 @@ table.dataTable td {
   border: 1px solid transparent;
   background: transparent;
   box-shadow: none;
+
 }
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
   color: white !important;

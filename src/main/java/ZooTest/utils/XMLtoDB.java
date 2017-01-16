@@ -29,8 +29,10 @@ public class XMLtoDB {
         Set<Cage> cageSet = new LinkedHashSet<>();
 
         Set<Animal> faultInsert = new LinkedHashSet<>();
+        System.out.println(animals.getAnimalList().size());
 
         for (Animal animal: animals.getAnimalList()) {
+            System.out.println(animal.toString());
             keeperSet.add(animal.getKeeper());
             cageSet.add(animal.getCage());
         }
@@ -39,42 +41,27 @@ public class XMLtoDB {
 
 
         for (Animal animal : animals.getAnimalList()) {
+            System.out.println("Animal FOR:" + animal);
             //Проверим существует ли питомец с таким именем
             Animal testAnimal = animalDAO.findAnimalByName(animal.getName());
+            System.out.println("XMLtoDB: base: " + testAnimal.toString());
 
            //Если нет, то
             if (testAnimal != null && testAnimal.getId() == 0) {
                 //Есть ли у питомца смотритель? Если есть:
                 if (animal.getKeeper() != null && animal.getKeeper().getId() != 0) {
-                    //Проверим - есть такой смотритель в базе
-                    Keeper keeper = keeperDAO.findKeeperByNameSurname(animal.getKeeper().getName(), animal.getKeeper().getSurname());
-                    //Если нет, то добавим этого нового смотрителя в базу
-                    if (keeper.getId() == 0) {
-                        keeperDAO.addKeeper(animal.getKeeper());
-                    }else {
-                    //Если же смотритель уже есть в базе - пропишем в питомце полученного из базы
-                        animal.setKeeper(keeper);
-                    }
-
+                    keeperDB(animal);
                 }
 
                 //Если у питомца прописана клетка, то
                 if (animal.getCage() != null && animal.getCage().getCageID() != 0) {
-                    //Ищем по номеру клетки
-                    Cage cage = cageDAO.findCageByNumber(animal.getCage().getNumber());
-                    //Если по такому номеру в базе нет клетки
-                    if (cage.getCageID() == 0) {
-                        //то мы ее добавим
-                        cageDAO.addCage(animal.getCage());
-                    } else {
-                        //Если же в базе есть уже такая клетка - перепишем у питомца
-                        animal.setCage(cage);
-                    }
+                    cageDB(animal);
                 }
                 animalDAO.addAnimal(animal);
 
             } else {
 
+                System.out.println("Попали в ELSE XMLtoDB");
                 //Если стоит установка переписать всех питомцев в абзу из XML
                 if (record) {
                     testAnimal.setName(animal.getName());
@@ -91,6 +78,7 @@ public class XMLtoDB {
                         cageDB(testAnimal);
                     }else testAnimal.setCage(null);
 
+                    System.out.println("XMLtoDB: testAnimal: " + testAnimal.toString());
                     animalDAO.updateAnimal(testAnimal);
 
                 //Если нет установки перезаписать питомцев в базу,

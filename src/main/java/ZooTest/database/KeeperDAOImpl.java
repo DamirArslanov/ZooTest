@@ -16,13 +16,15 @@ public class KeeperDAOImpl implements KeeperDAO {
     private static final String PASSWORD = "root";
 
 
-    private String addKeeper = "INSERT INTO keeper (keeperID, name, surname) VALUES (?, ?, ?)";
+    private String addKeeper = "INSERT INTO keeper (name, surname) VALUES (?, ?)";
     private String updateKeeper = "UPDATE keeper SET keeper.name = ?, keeper.surname = ? WHERE keeper.keeperID = ?";
     private String getKeeperByID = "SELECT keeper.keeperID, keeper.name, keeper.surname FROM keeper WHERE keeper.keeperID = ?";
     private String getAllKeepers = "SELECT keeper.keeperID, keeper.name, keeper.surname FROM keeper";
 
     private String deleteKeeper = "DELETE FROM keeper WHERE keeper.keeperID = ?";
     private String deleteLinkAnimal = "DELETE FROM keeper_animals WHERE keeper_animals.keeperID = ?";
+
+    private String searchKeeper = "SELECT keeper.keeperID, keeper.name, keeper.surname FROM keeper WHERE keeper.name = ? AND keeper.surname = ?";
 
 
 
@@ -44,30 +46,25 @@ public class KeeperDAOImpl implements KeeperDAO {
 
 
     @Override
-    public Integer addKeeper(Keeper keeper) {
+    public void addKeeper(Keeper keeper) {
 
-        Integer add = null;
         try(Connection dbConnection = getDBConnection();
-            Statement stmt = dbConnection.createStatement();
-            ResultSet resultSetA = stmt.executeQuery("SELECT COUNT(*) FROM keeper");
-            PreparedStatement pStatement = dbConnection.prepareStatement(addKeeper)) {
+            PreparedStatement pStatement = dbConnection.prepareStatement(addKeeper, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            pStatement.setString(1, keeper.getName());
+            pStatement.setString(2, keeper.getSurname());
 
-            dbConnection.setAutoCommit(false);
-
-            resultSetA.next();
-            int lastKeeperID = resultSetA.getInt(1);
-            System.out.println("Сейчас максимальный Keeper ID = " + lastKeeperID);
-
-            pStatement.setInt(1, lastKeeperID+1);
-            pStatement.setString(2, keeper.getName());
-            pStatement.setString(3, keeper.getSurname());
-
-            add = pStatement.executeUpdate();
-            dbConnection.commit();
+            pStatement.executeUpdate();
+            try (ResultSet generatedKeys =  pStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    keeper.setId(generatedKeys.getInt(1));
+                }
+                else {
+                    throw new SQLException("Creating keeper failed, no ID obtained.");
+                }
+            }
         }catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
-        return add;
         }
 
     @Override
@@ -76,15 +73,12 @@ public class KeeperDAOImpl implements KeeperDAO {
         try(Connection dbConnection = getDBConnection();
             PreparedStatement pStatement = dbConnection.prepareStatement(updateKeeper)) {
 
-            dbConnection.setAutoCommit(false);
-
             //SET keeper.name = ?, keeper.surname = ? WHERE keeper.keeperID = ?
             pStatement.setString(1, keeper.getName());
             pStatement.setString(2, keeper.getSurname());
             pStatement.setInt(3, keeper.getId());
 
             pStatement.executeUpdate();
-            dbConnection.commit();
 
         }catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -97,27 +91,24 @@ public class KeeperDAOImpl implements KeeperDAO {
 
         try(Connection dbConnection = getDBConnection();
             PreparedStatement pStatement = dbConnection.prepareStatement(getKeeperByID)) {
-
-            dbConnection.setAutoCommit(false);
             pStatement.setInt(1, id);
 
             //keeper.keeperID, keeper.name, keeper.surname
             ResultSet keeperResult = pStatement.executeQuery();
             while (keeperResult.next()) {
                 keeper.setId(keeperResult.getInt("keeperID"));
-                System.out.println(keeper.getId());
                 keeper.setName(keeperResult.getString("name"));
-                System.out.println(keeper.getName());
                 keeper.setSurname(keeperResult.getString("surname"));
-                System.out.println(keeper.getSurname());
-                System.out.println("-------------");
+                keeper.setNameSurname(keeper.getFIO());
             }
-            dbConnection.commit();
+
         }catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return keeper;
     }
+
+
 
     @Override
     public void deleteKeeper(int id) {
@@ -125,15 +116,11 @@ public class KeeperDAOImpl implements KeeperDAO {
             PreparedStatement pStatement = dbConnection.prepareStatement(deleteKeeper);
             PreparedStatement aStatement = dbConnection.prepareStatement(deleteLinkAnimal)) {
 
-            dbConnection.setAutoCommit(false);
-
-            pStatement.setInt(1, id);
             aStatement.setInt(1, id);
+            pStatement.setInt(1, id);
 
-            pStatement.executeUpdate();
             aStatement.executeUpdate();
-
-            dbConnection.commit();
+            pStatement.executeUpdate();
 
         }catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -149,27 +136,44 @@ public class KeeperDAOImpl implements KeeperDAO {
             PreparedStatement stmt = dbConnection.prepareStatement(getAllKeepers);
             ResultSet resultSet = stmt.executeQuery()) {
 
-//            dbConnection.setAutoCommit(false);
-
-
             while (resultSet.next()) {
                 Keeper keeper = new Keeper();
-
                 keeper.setId(resultSet.getInt(1));
-//                System.out.println("KeeperID: " + keeper.getId());
                 keeper.setName(resultSet.getString(2));
-//                System.out.println("KeeperNAME: " + keeper.getName());
                 keeper.setSurname(resultSet.getString(3));
-//                System.out.println("KeeperSURNAME: " + keeper.getSurname());
-//                System.out.println("--------------");
+                keeper.setNameSurname(keeper.getFIO());
                 keepers.add(keeper);
             }
 
-//            dbConnection.commit();
         }catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return keepers;
     }
 
+    @Override
+    public Keeper findKeeperByNameSurname(String name, String surname) {
+        Keeper keeper = new Keeper();
+        try(Connection dbConnection = getDBConnection();
+            PreparedStatement pStatement = dbConnection.prepareStatement(searchKeeper)) {
+            System.out.println("Пришел запрос на поиск: Имя " + name + " Фамилия " + surname);
+
+            pStatement.setString(1, name);
+            pStatement.setString(2, surname);
+
+            //keeper.keeperID, keeper.name, keeper.surname
+            ResultSet keeperResult = pStatement.executeQuery();
+
+            if(keeperResult.next()) {
+                keeper.setId(keeperResult.getInt(1));
+                keeper.setName(keeperResult.getString(2));
+                keeper.setSurname(keeperResult.getString(3));
+                keeper.setNameSurname(keeper.getFIO());
+            }
+
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return keeper;
+    }
 }
