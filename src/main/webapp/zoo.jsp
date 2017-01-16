@@ -405,7 +405,7 @@
                             <label for="name" class="col-md-2 control-label">Питомец</label>
 
                             <div class="col-md-10">
-                                <input type="text" class="form-control" name="name" id="name" placeholder="Имя питомца должно быть уникально">
+                                <input type="text" class="form-control" name="name" id="name" placeholder="Имя питомца должно быть уникально" autofocus>
                                 <%--<p id="result"></p>--%>
                                 <div class="help-block" id="error"></div>
                                 <div id="result"></div>
