@@ -55,10 +55,6 @@
     <script type="text/javascript" charset="utf8" src=" https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
 
 
-
-    <%--<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/jquery.validate.min.js"></script>--%>
-
-
     <script>
 
         var rowId = '';
@@ -122,6 +118,38 @@
 
             });
 
+            $("#name").keyup(function()
+            {
+                var name = $(this).val();
+                if(name.length > 1)
+                {
+                    $("#result").html('checking...');
+                    $.ajax({
+                        type : 'GET',
+                        url  : '/search',
+                        data : $(this).serialize(),
+                        success : function(data)
+                        {
+                            if (data == 'true') {
+                                $("#result").html("<div id='result' style='color:brown'>Имя питомца занято!</div>");
+                                $('#submit').attr("disabled", true);
+                            }
+//                            $("#result").html(data);
+                            else if (data == 'false') {
+                                $("#result").html("<div id='result' style='color:green'>Имя питомца свободно!</div>");
+                                $('#submit').attr("disabled", false);
+                            }
+
+                        }
+                    });
+                    return false;
+                }
+                else
+                {
+                    $("#result").html('');
+                }
+            });
+
             $('#animals tbody').on( 'click', '#delete', function () {
                 var data = table.row( $(this).parents('tr') ).data();
                 console.log('ID удаленого питомца' + data.id);
@@ -153,7 +181,9 @@
 
             $('#myModal').on('hidden.bs.modal', function () {
                 $(this).find("input,textarea,select").val('').end();
-
+                jQuery('#form').get(0).reset();
+                $("#result").html('');
+                $('#submit').attr("disabled", false);
             });
 
             $(function() {
@@ -301,7 +331,9 @@
                             <label for="name" class="col-md-2 control-label">Питомец</label>
 
                             <div class="col-md-10">
-                                <input type="text" class="form-control" name="name" id="name" placeholder="Animal name">
+                                <input type="text" class="form-control" name="name" id="name" placeholder="Имя питомца должно быть уникально">
+                                <%--<p id="result"></p>--%>
+                                <div id="result"></div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -309,14 +341,14 @@
 
                             <div class="col-md-10">
                                 <input type="text" class="form-control" name="animalClass" id="animalClass"
-                                       placeholder="Animal class">
+                                       placeholder="Класс питомца">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="age" class="col-md-2 control-label">Возраст</label>
 
                             <div class="col-md-10">
-                                <input type="text" class="form-control" id="age" name="age" placeholder="Animal age">
+                                <input type="text" class="form-control" id="age" name="age" placeholder="Возраст питомца">
                             </div>
                         </div>
 
@@ -325,7 +357,7 @@
 
                             <div class="col-md-10">
                                 <input type="text" class="form-control ui-widget" id="keeper" name="keeper"
-                                       placeholder="Keeper name">
+                                       placeholder="Введите имя действующего смотрителя">
                             </div>
                         </div>
 
@@ -333,7 +365,7 @@
                             <label for="cage" class="col-md-2 control-label">№ Клетки</label>
 
                             <div class="col-md-10">
-                                <input type="text" class="form-control" id="cage" name="cage" placeholder="Animal Cage">
+                                <input type="text" class="form-control" id="cage" name="cage" placeholder="Клетка">
                             </div>
                         </div>
 
@@ -349,7 +381,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="submit" id="submit" class="btn btn-primary">Save changes</button>
+                <button type="submit" id="submit" name="submit" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
