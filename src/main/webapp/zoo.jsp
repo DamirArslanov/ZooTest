@@ -216,7 +216,6 @@
                 },
 
                 submitHandler: function(form) {
-                    $('#submit').attr("disabled", true);
                     form.submit();
                     alert('ok');
                 }

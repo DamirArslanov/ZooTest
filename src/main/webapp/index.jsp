@@ -99,7 +99,7 @@ Although you can use them, for a more unique website, replace these images with 
         <div class="header-content-inner" style = "font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif">
             <h1>ZooLand</h1>
             <p>Create Your Zoo. Feel The Force.</p>
-            <a href="#" class="btn btn-primary btn-lg" style="border-radius: 300px;">Engage Now</a>
+            <a href="<c:url value="/management"/>" class="btn btn-primary btn-lg" style="border-radius: 300px;">Engage Now</a>
         </div>
     </div>
 </header>
