@@ -95,11 +95,13 @@ public class AnimalDAOImpl implements AnimalDAO {
         return dbConnection;
     }
 
-    //?????List<Integer>?????
+    
     @Override
     public void addAnimal(Animal animal) {
 
-
+        // Т.е. при любой работе создается новый connection и НОВЫЙ PreparedStatement - 
+        //PreparedStatements привязаны к одному соединению
+        //переписать или добавить метод.    ...потом
         try(Connection dbConnection = getDBConnection();
             Statement stmt = dbConnection.createStatement();
             ResultSet resultSetA = stmt.executeQuery("SELECT COUNT(*) FROM animal");
